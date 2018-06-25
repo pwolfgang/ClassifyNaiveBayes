@@ -12,26 +12,15 @@
     </properties>
     <repositories>
         <repository>
-            <id>StemmerFactory</id>
-            <url>https://github.com/pwolfgang/StemmerFactory/releases/tag/1.1.1</url>
-        </repository>
-        <repository>
-            <id>libsvm_java</id>
-            <url>https://github.com/pwolfgang/libsvm_java/releases/tag/3.17.1</url>
-        </repository>
-<!--
-                <repository>
-            <id>TextToolsUtil</id>
-            <url>https://github.com/pwolfgang/TextToolsUtil/releases/tag/1.1.1</url>
-        </repository>
--->        
+            <id>TextToolsUtil-mvn-repo</id>
+            <url>https://raw.github.com/pwolfgang/TextToolsUtil/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>       
     </repositories>
     <dependencies>
-        <dependency>
-            <groupId>edu.temple.cla.papolicy.wolfgang</groupId>
-            <artifactId>StemmerFactory</artifactId>
-            <version>1.1.1</version>
-        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -55,14 +44,9 @@
             <version>3.0.2</version>
         </dependency>
         <dependency>
-            <groupId>tw.edu.ntu.csie</groupId>
-            <artifactId>libsvm_java</artifactId>
-            <version>3.17.1</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>edu.temple.cla.papolicy.wolfgang.texttools</groupId>
             <artifactId>TextToolsUtil</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
@@ -81,6 +65,12 @@
                     <artifactId>selenium-remote-driver</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>TrainNaiveBayes</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

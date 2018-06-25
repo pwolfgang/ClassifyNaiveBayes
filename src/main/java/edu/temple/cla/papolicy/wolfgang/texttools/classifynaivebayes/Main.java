@@ -32,12 +32,10 @@
 package edu.temple.cla.papolicy.wolfgang.texttools.classifynaivebayes;
 
 import edu.temple.cla.papolicy.wolfgang.texttools.util.CommonFrontEnd;
+import edu.temple.cla.papolicy.wolfgang.texttools.util.Util;
 import edu.temple.cla.papolicy.wolfgang.texttools.util.Vocabulary;
 import edu.temple.cla.papolicy.wolfgang.texttools.util.WordCounter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -111,9 +109,9 @@ public class Main implements Callable<Void> {
         commonFrontEnd.loadData(ids, ref, problemVocab, counts);
         File modelParent = new File(modelDir);
         Map<String, Double> prior
-                = (Map<String, Double>) readFile(modelParent, "prior.bin");
+                = (Map<String, Double>) Util.readFile(modelParent, "prior.bin");
         Map<String, Map<String, Double>> condProb
-                = (Map<String, Map<String, Double>>) readFile(modelParent, "condProp.bin");
+                = (Map<String, Map<String, Double>>) Util.readFile(modelParent, "condProp.bin");
         List<Integer> categories = new ArrayList<>();
         for (int i = 0; i < counts.size(); i++) {
             Integer cat = classify(counts.get(i), prior, condProb);
@@ -132,14 +130,6 @@ public class Main implements Callable<Void> {
         return null;
     }
 
-    public Object readFile(File modelParent, String name) {
-        File inputFile = new File(modelParent, name);
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(inputFile))) {
-            return ois.readObject();
-        } catch (ClassNotFoundException | IOException ioex) {
-            throw new RuntimeException("Error reading " + inputFile.getPath(), ioex);
-        }
-    }
 
     public Integer classify(WordCounter counter, Map<String, Double> prior, Map<String, Map<String, Double>> condProb) {
         SortedMap<Double, String> testCats = new TreeMap<>();

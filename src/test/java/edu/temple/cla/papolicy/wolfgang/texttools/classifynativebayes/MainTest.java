@@ -32,17 +32,14 @@
 package edu.temple.cla.papolicy.wolfgang.texttools.classifynativebayes;
 
 import edu.temple.cla.papolicy.wolfgang.texttools.classifynaivebayes.Main;
-import edu.temple.cla.papolicy.wolfgang.texttools.util.CommonFrontEnd;
 import edu.temple.cla.papolicy.wolfgang.texttools.util.Vocabulary;
 import edu.temple.cla.papolicy.wolfgang.texttools.util.WordCounter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import org.junit.Before;
 import org.junit.Test;
-import picocli.CommandLine;
 
 /**
  *
@@ -54,13 +51,19 @@ public class MainTest {
     List<String> ids = new ArrayList<>();
     Vocabulary vocabulary = new Vocabulary();
     List<WordCounter> counts = new ArrayList<>();
-    String[] args = {"--datasource", "TestDb.txt",
+    String[] classifyArgs = {"--datasource", "TestDb.txt",
                 "--table_name", "TestTableUnknown",
                 "--id_column", "ID",
                 "--text_column", "Abstract",
                 "--code_column", "Code",
                 "--remove_stopwords", "false",
                 "--output_code_col", "Code"};
+    String[] trainArgs = {"--datasource", "TestDb.txt",
+                "--table_name", "TestTableUnknown",
+                "--id_column", "ID",
+                "--text_column", "Abstract",
+                "--code_column", "Code",
+                "--remove_stopwords", "false"};
     Map<String, Integer> docsInTrainingSet = new TreeMap<>();
     Map<String, WordCounter> trainingSets = new TreeMap<>();
     Map<String, Double> prior = new TreeMap<>();
@@ -72,13 +75,14 @@ public class MainTest {
     @Before
     public void Setup() {
         TestDatabase.createTestTable();
+        edu.temple.cla.papolicy.wolfgang.texttools.trainnaivebayes.Main.main(trainArgs);
     }
     
     
     
     @Test
     public void testMain() {
-        Main.main(args);
+        Main.main(classifyArgs);
     }
 
     
