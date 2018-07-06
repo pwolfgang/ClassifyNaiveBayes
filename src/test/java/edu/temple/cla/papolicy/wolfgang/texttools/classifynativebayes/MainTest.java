@@ -49,7 +49,6 @@ public class MainTest {
     
     List<String> ref = new ArrayList<>();
     List<String> ids = new ArrayList<>();
-    Vocabulary vocabulary = new Vocabulary();
     List<WordCounter> counts = new ArrayList<>();
     String[] classifyArgs = {"--datasource", "TestDb.txt",
                 "--table_name", "TestTableUnknown",

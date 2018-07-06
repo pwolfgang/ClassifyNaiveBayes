@@ -33,7 +33,6 @@ package edu.temple.cla.papolicy.wolfgang.texttools.classifynaivebayes;
 
 import edu.temple.cla.papolicy.wolfgang.texttools.util.CommonFrontEnd;
 import edu.temple.cla.papolicy.wolfgang.texttools.util.Util;
-import edu.temple.cla.papolicy.wolfgang.texttools.util.Vocabulary;
 import edu.temple.cla.papolicy.wolfgang.texttools.util.WordCounter;
 import java.io.File;
 import java.util.ArrayList;
@@ -97,33 +96,29 @@ public class Main implements Callable<Void> {
 
     @Override
     public Void call() {
-        List<String> ids = new ArrayList<>();
-        List<String> ref = new ArrayList<>();
-        List<WordCounter> counts = new ArrayList<>();
-        List<Integer> cats = new ArrayList<>();
-        Vocabulary problemVocab = new Vocabulary(); // Not used
+        List<Map<String, Object>> cases = new ArrayList<>();
         CommonFrontEnd commonFrontEnd = new CommonFrontEnd();
         CommandLine commandLine = new CommandLine(commonFrontEnd);
         commandLine.setUnmatchedArgumentsAllowed(true);
         commandLine.parse(args);
-        commonFrontEnd.loadData(ids, ref, problemVocab, counts);
+        commonFrontEnd.loadData(cases);
         File modelParent = new File(modelDir);
+        @SuppressWarnings("unchecked")
         Map<String, Double> prior
                 = (Map<String, Double>) Util.readFile(modelParent, "prior.bin");
+        @SuppressWarnings("unchecked")
         Map<String, Map<String, Double>> condProb
                 = (Map<String, Map<String, Double>>) Util.readFile(modelParent, "condProp.bin");
-        List<Integer> categories = new ArrayList<>();
-        for (int i = 0; i < counts.size(); i++) {
-            Integer cat = classify(counts.get(i), prior, condProb);
-            categories.add(cat);
-        }
+        cases.forEach(classificationCase -> {
+            Integer cat = classify((WordCounter)classificationCase.get("counts"), prior, condProb);
+            classificationCase.put("newCode", cat);
+            
+        });
         String outputTable = outputTableName != null ? outputTableName : commonFrontEnd.getTableName();
         if (outputCodeCol != null) {
             System.err.println("Inserting result into database");
             commonFrontEnd.outputToDatabase(outputTable,
-                    outputCodeCol,
-                    ids,
-                    categories);
+                    outputCodeCol, cases, "newCode");
         }
         System.err.println("SUCESSFUL COMPLETION");
 
@@ -131,7 +126,8 @@ public class Main implements Callable<Void> {
     }
 
 
-    public Integer classify(WordCounter counter, Map<String, Double> prior, Map<String, Map<String, Double>> condProb) {
+    public Integer classify(WordCounter counter, Map<String, Double> prior, 
+            Map<String, Map<String, Double>> condProb) {
         SortedMap<Double, String> testCats = new TreeMap<>();
         prior.forEach((cat, priorProb) -> {
             double score = Math.log(priorProb);
